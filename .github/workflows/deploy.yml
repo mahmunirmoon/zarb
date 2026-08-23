@@ -1,12 +1,21 @@
-# Deploys the production build (dist/) to GitHub Pages at https://mahmunirmoon.github.io/zarb/
+# Deploys the production build (dist/) to GitHub Pages for https://mahmunirmoon.github.io/zarb/
 #
-# One-time repo setup (Settings → Pages):
-#   Source: "GitHub Actions"
+# Why this workflow exists:
+#   Pages for this repo is served from a branch source (the repository root), so the raw
+#   source index.html was being published — which references /src/main.tsx, a dev-only
+#   module that 404s in production (blank dark page).
 #
-# What this fixes: Pages was serving the raw source index.html, which references
-# /src/main.tsx (a dev-only module that 404s in production). This workflow runs
-# the real Vite build and publishes dist/, where index.html references the
-# compiled bundles under ./assets/ (relative base, so it works under /zarb/).
+# What this workflow does (no repository-settings changes required):
+#   1. build    — npm ci, npm run build, then HARD-VERIFIES that dist/index.html
+#                 contains no /src/main.tsx, src/main.tsx or .tsx references and does
+#                 reference the compiled bundles under ./assets/. Uploads ONLY ./dist.
+#   2. deploy   — publishes dist via the GitHub Pages environment (actions/deploy-pages).
+#                 Runs with continue-on-error: it is the active path when Pages is set to
+#                 "GitHub Actions", and a harmless no-op when Pages is branch-based.
+#   3. publish  — the branch-source path: asks the Pages API which branch/path Pages
+#                 actually serves, then commits the built dist/ onto that branch root
+#                 (index.html + assets/ only), so the branch Pages already serves stops
+#                 exposing source files and starts serving the compiled build.
 
 name: Deploy to GitHub Pages
 
@@ -16,7 +25,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -26,6 +35,8 @@ concurrency:
 
 jobs:
   build:
+    # Skip runs triggered by this workflow's own publish commits (loop prevention).
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -43,14 +54,42 @@ jobs:
       - name: Build production bundle
         run: npm run build
 
-      - name: Upload Pages artifact (dist/)
+      - name: Verify dist/ contains only the compiled site
+        run: |
+          set -euo pipefail
+          echo "--- dist tree ---"
+          find dist -type f | sort
+          echo "--- dist/index.html ---"
+          cat dist/index.html
+          echo "-------------------"
+          if grep -nE '(/src/main\.tsx|src/main\.tsx|\.tsx)' dist/index.html; then
+            echo "::error::dist/index.html still references source .tsx files"
+            exit 1
+          fi
+          if ! grep -q 'assets/' dist/index.html; then
+            echo "::error::dist/index.html does not reference compiled bundles under ./assets/"
+            exit 1
+          fi
+          echo "OK: dist/index.html references only compiled ./assets/ bundles."
+
+      - name: Upload Pages artifact (dist/ only)
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
+      - name: Upload dist for the publish job
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          if-no-files-found: error
+
   deploy:
+    # Pages-environment deployment (active when Pages source is "GitHub Actions").
     needs: build
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
+    continue-on-error: true
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -58,3 +97,66 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  publish:
+    # Branch-source deployment: put the compiled dist/ on the exact branch/path that
+    # Pages is configured to serve, so no Pages settings change is needed.
+    needs: build
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Detect which branch/path Pages serves
+        id: detect
+        run: |
+          set -uo pipefail
+          resp=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/pages")
+          echo "Pages API response: $resp"
+          build_type=$(printf '%s' "$resp" | jq -r '.build_type // "legacy"')
+          branch=$(printf '%s' "$resp" | jq -r '.source.branch // "main"')
+          path=$(printf '%s' "$resp" | jq -r '.source.path // "/"')
+          if [ "$build_type" = "null" ] || [ -z "$build_type" ]; then build_type="legacy"; fi
+          if [ "$branch" = "null" ] || [ -z "$branch" ]; then branch="main"; fi
+          if [ "$path" = "null" ] || [ -z "$path" ]; then path="/"; fi
+          echo "build_type=$build_type" >> "$GITHUB_OUTPUT"
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+          echo "path=$path" >> "$GITHUB_OUTPUT"
+          echo "Pages serves: build_type=$build_type branch=$branch path=$path"
+
+      - name: Checkout the served branch
+        if: steps.detect.outputs.build_type != 'workflow'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.detect.outputs.branch }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download built dist
+        if: steps.detect.outputs.build_type != 'workflow'
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: __dist__
+
+      - name: Publish compiled build to the served branch root
+        if: steps.detect.outputs.build_type != 'workflow'
+        run: |
+          set -euo pipefail
+          TARGET="."
+          if [ "${{ steps.detect.outputs.path }}" = "/docs" ]; then
+            TARGET="docs"
+            mkdir -p docs
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -rf "$TARGET/assets"
+          cp -r __dist__/. "$TARGET"/
+          rm -rf __dist__
+          git add "$TARGET/index.html" "$TARGET/assets"
+          if git diff --cached --quiet; then
+            echo "Build already published — nothing to push."
+          else
+            git commit -m "chore(pages): publish production build [skip ci]"
+            git push origin "HEAD:${{ steps.detect.outputs.branch }}"
+            echo "Published dist/ to ${{ steps.detect.outputs.branch }}${{ steps.detect.outputs.path }}"
+          fi
