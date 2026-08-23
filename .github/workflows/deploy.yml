@@ -1,0 +1,60 @@
+# Deploys the production build (dist/) to GitHub Pages at https://mahmunirmoon.github.io/zarb/
+#
+# One-time repo setup (Settings → Pages):
+#   Source: "GitHub Actions"
+#
+# What this fixes: Pages was serving the raw source index.html, which references
+# /src/main.tsx (a dev-only module that 404s in production). This workflow runs
+# the real Vite build and publishes dist/, where index.html references the
+# compiled bundles under ./assets/ (relative base, so it works under /zarb/).
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build production bundle
+        run: npm run build
+
+      - name: Upload Pages artifact (dist/)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
