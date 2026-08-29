@@ -5,45 +5,48 @@
   --font-sans: "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
 }
 
-/* ---------- mode themes ---------- */
+/* ---------- mode themes — warm golden identity ---------- */
+/* focus: golden hour (espresso + gold) */
 html[data-mode="focus"] {
-  --bg: #1b1214;
-  --bg-soft: #251819;
-  --card: #241718;
-  --card-edge: rgba(255, 205, 190, 0.09);
-  --ink: #f6eee4;
-  --ink-dim: #b3a196;
-  --accent: #ff6a55;
-  --accent-strong: #ff8368;
-  --accent-deep: rgba(255, 106, 85, 0.16);
-  --accent-glow: rgba(255, 106, 85, 0.35);
-  --accent-2: #ffb054;
+  --bg: #201510;
+  --bg-soft: #2a1c13;
+  --card: #291c14;
+  --card-edge: rgba(242, 199, 132, 0.13);
+  --ink: #f7ecd8;
+  --ink-dim: #bfa887;
+  --accent: #f2b13e;
+  --accent-strong: #ffc95e;
+  --accent-deep: rgba(242, 177, 62, 0.16);
+  --accent-glow: rgba(242, 177, 62, 0.4);
+  --accent-2: #e08a63;
 }
+/* short break: warm sage, gold stays visible as secondary */
 html[data-mode="short"] {
-  --bg: #0e1a16;
-  --bg-soft: #13241e;
-  --card: #12231d;
-  --card-edge: rgba(180, 255, 220, 0.09);
-  --ink: #eef6ec;
-  --ink-dim: #94ab9d;
-  --accent: #3fd68f;
-  --accent-strong: #5fe3a6;
-  --accent-deep: rgba(63, 214, 143, 0.14);
-  --accent-glow: rgba(63, 214, 143, 0.32);
-  --accent-2: #ffd166;
+  --bg: #1a1c10;
+  --bg-soft: #242816;
+  --card: #232716;
+  --card-edge: rgba(214, 228, 168, 0.12);
+  --ink: #f3f4e4;
+  --ink-dim: #a9b28d;
+  --accent: #a8c271;
+  --accent-strong: #c5da90;
+  --accent-deep: rgba(168, 194, 113, 0.15);
+  --accent-glow: rgba(168, 194, 113, 0.34);
+  --accent-2: #f2b13e;
 }
+/* long break: soft burgundy (زرشکی ملایم), gold stays visible as secondary */
 html[data-mode="long"] {
-  --bg: #111526;
-  --bg-soft: #171d33;
-  --card: #161c31;
-  --card-edge: rgba(190, 205, 255, 0.1);
-  --ink: #eef0fa;
-  --ink-dim: #9aa3c2;
-  --accent: #8ba3ff;
-  --accent-strong: #a3b6ff;
-  --accent-deep: rgba(139, 163, 255, 0.15);
-  --accent-glow: rgba(139, 163, 255, 0.33);
-  --accent-2: #f2a65a;
+  --bg: #241216;
+  --bg-soft: #30181e;
+  --card: #2d171c;
+  --card-edge: rgba(240, 182, 193, 0.12);
+  --ink: #f8eaec;
+  --ink-dim: #bd9aa2;
+  --accent: #d48493;
+  --accent-strong: #e8a0ae;
+  --accent-deep: rgba(212, 132, 147, 0.16);
+  --accent-glow: rgba(212, 132, 147, 0.35);
+  --accent-2: #f2b13e;
 }
 
 html,
@@ -82,7 +85,7 @@ body {
   inset: 0;
   pointer-events: none;
   z-index: 1;
-  opacity: 0.055;
+  opacity: 0.05;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
 }
 
@@ -166,6 +169,13 @@ body {
   100% { transform: scale(1); }
 }
 .dot-pop { animation: dot-pop 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* slow sun-ray rotation for decorative suns */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.spin-slow { animation: spin-slow 46s linear infinite; }
 
 /* progress ring easing */
 .ring-progress {

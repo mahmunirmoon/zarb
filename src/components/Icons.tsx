@@ -123,17 +123,32 @@ export const KeyboardIcon = ({ className }: IconProps) => (
   </svg>
 );
 
-export const TomatoMark = ({ className }: IconProps) => (
-  <svg viewBox="0 0 24 24" className={className} fill="none" aria-hidden>
-    <path
-      d="M12 8.6c-4.9 0-8.4 3.1-8.4 7 0 4.1 3.8 6.6 8.4 6.6s8.4-2.5 8.4-6.6c0-3.9-3.5-7-8.4-7Z"
-      fill="currentColor"
-    />
-    <path
-      d="M12 8.6c-2 0-3.4-.8-4.1-2.5 1.8.3 3-.2 4.1-1.9 1.1 1.7 2.3 2.2 4.1 1.9-.7 1.7-2.1 2.5-4.1 2.5Z"
-      fill="currentColor"
-      opacity=".5"
-    />
-    <path d="M12 8.8V6.4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+/* the smiling golden sun — brand mark of «اوقات طلایی من» */
+export const SunMark = ({ className }: IconProps) => (
+  <svg viewBox="0 0 64 64" className={className} fill="none" aria-hidden>
+    {/* rays */}
+    <g stroke="#e8a23a" strokeWidth="4" strokeLinecap="round">
+      <line x1="32" y1="3.5" x2="32" y2="9.5" />
+      <line x1="32" y1="54.5" x2="32" y2="60.5" />
+      <line x1="3.5" y1="32" x2="9.5" y2="32" />
+      <line x1="54.5" y1="32" x2="60.5" y2="32" />
+      <line x1="11.8" y1="11.8" x2="16.1" y2="16.1" />
+      <line x1="47.9" y1="47.9" x2="52.2" y2="52.2" />
+      <line x1="11.8" y1="52.2" x2="16.1" y2="47.9" />
+      <line x1="47.9" y1="16.1" x2="52.2" y2="11.8" />
+    </g>
+    {/* face */}
+    <circle cx="32" cy="32" r="18.5" fill="#f6bb4d" />
+    <circle cx="26" cy="25" r="7" fill="#ffd97e" opacity="0.55" />
+    {/* blush */}
+    <ellipse cx="20.8" cy="35.5" rx="2.8" ry="1.8" fill="#ee9b5e" opacity="0.5" />
+    <ellipse cx="43.2" cy="35.5" rx="2.8" ry="1.8" fill="#ee9b5e" opacity="0.5" />
+    {/* eyes with sparkle */}
+    <circle cx="25.5" cy="30" r="2.3" fill="#6b4423" />
+    <circle cx="38.5" cy="30" r="2.3" fill="#6b4423" />
+    <circle cx="26.4" cy="29.1" r="0.8" fill="#fff8ec" opacity="0.9" />
+    <circle cx="39.4" cy="29.1" r="0.8" fill="#fff8ec" opacity="0.9" />
+    {/* smile */}
+    <path d="M24.5 37.5q7.5 7.5 15 0" stroke="#6b4423" strokeWidth="2.5" strokeLinecap="round" />
   </svg>
 );
