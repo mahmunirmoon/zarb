@@ -5,116 +5,175 @@
   --font-sans: "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
 }
 
-/* ---------- mode themes — warm golden identity ---------- */
-/* focus: golden hour (espresso + gold) */
+/* smoother sky transitions between modes */
+@property --sky-top { syntax: "<color>"; inherits: true; initial-value: #4aa3e0; }
+@property --sky-mid { syntax: "<color>"; inherits: true; initial-value: #7fc4ef; }
+@property --sky-bottom { syntax: "<color>"; inherits: true; initial-value: #c9e8fa; }
+
+/* ---------- mode themes (sky + gold identity, dark readable ink) ---------- */
 html[data-mode="focus"] {
-  --bg: #201510;
-  --bg-soft: #2a1c13;
-  --card: #291c14;
-  --card-edge: rgba(242, 199, 132, 0.13);
-  --ink: #f7ecd8;
-  --ink-dim: #bfa887;
-  --accent: #f2b13e;
-  --accent-strong: #ffc95e;
-  --accent-deep: rgba(242, 177, 62, 0.16);
-  --accent-glow: rgba(242, 177, 62, 0.4);
-  --accent-2: #e08a63;
+  --sky-top: #3f9cdd;
+  --sky-mid: #79bfe9;
+  --sky-bottom: #cbe9fb;
+  --bg: #79bfe9;
+  --card: rgba(255, 253, 247, 0.92);
+  --card-edge: rgba(18, 45, 78, 0.14);
+  --ring-track: rgba(18, 45, 78, 0.1);
+  --ink: #101d2c;
+  --ink-dim: #3d5570;
+  --accent: #e08a00;
+  --accent-strong: #b96f00;
+  --accent-deep: rgba(224, 138, 0, 0.16);
+  --accent-glow: rgba(255, 196, 90, 0.55);
+  --accent-2: #0e7490;
+  --on-accent: #241503;
 }
-/* short break: warm sage, gold stays visible as secondary */
 html[data-mode="short"] {
-  --bg: #1a1c10;
-  --bg-soft: #242816;
-  --card: #232716;
-  --card-edge: rgba(214, 228, 168, 0.12);
-  --ink: #f3f4e4;
-  --ink-dim: #a9b28d;
-  --accent: #a8c271;
-  --accent-strong: #c5da90;
-  --accent-deep: rgba(168, 194, 113, 0.15);
-  --accent-glow: rgba(168, 194, 113, 0.34);
-  --accent-2: #f2b13e;
+  --sky-top: #4aa8cf;
+  --sky-mid: #86cce4;
+  --sky-bottom: #dcf2f0;
+  --bg: #86cce4;
+  --card: rgba(253, 255, 252, 0.92);
+  --card-edge: rgba(15, 48, 52, 0.14);
+  --ring-track: rgba(15, 48, 52, 0.1);
+  --ink: #0f2124;
+  --ink-dim: #3a5a5c;
+  --accent: #2f8a57;
+  --accent-strong: #256e45;
+  --accent-deep: rgba(47, 138, 87, 0.15);
+  --accent-glow: rgba(110, 214, 160, 0.5);
+  --accent-2: #d97f06;
+  --on-accent: #f2fbf5;
 }
-/* long break: soft burgundy (زرشکی ملایم), gold stays visible as secondary */
 html[data-mode="long"] {
-  --bg: #241216;
-  --bg-soft: #30181e;
-  --card: #2d171c;
-  --card-edge: rgba(240, 182, 193, 0.12);
-  --ink: #f8eaec;
-  --ink-dim: #bd9aa2;
-  --accent: #d48493;
-  --accent-strong: #e8a0ae;
-  --accent-deep: rgba(212, 132, 147, 0.16);
-  --accent-glow: rgba(212, 132, 147, 0.35);
-  --accent-2: #f2b13e;
+  --sky-top: #5b93cf;
+  --sky-mid: #95bfe4;
+  --sky-bottom: #f6e3cd;
+  --bg: #95bfe4;
+  --card: rgba(255, 252, 250, 0.92);
+  --card-edge: rgba(64, 28, 44, 0.14);
+  --ring-track: rgba(64, 28, 44, 0.1);
+  --ink: #231420;
+  --ink-dim: #5c4457;
+  --accent: #b24a5e;
+  --accent-strong: #973c4e;
+  --accent-deep: rgba(178, 74, 94, 0.14);
+  --accent-glow: rgba(240, 150, 168, 0.5);
+  --accent-2: #d97f06;
+  --on-accent: #fdf3f4;
 }
 
 html,
 body {
   background: var(--bg);
-  transition: background-color 900ms ease;
 }
 
 body {
   font-family: var(--font-sans);
+  font-weight: 500;
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
+
+/* thicker, more readable type everywhere */
+.font-medium { font-weight: 600; }
+.font-semibold { font-weight: 700; }
+.font-bold { font-weight: 800; }
+.font-extrabold { font-weight: 800; }
 
 ::selection {
   background: var(--accent);
-  color: var(--bg);
+  color: var(--on-accent);
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--card-edge) transparent;
+  scrollbar-color: rgba(18, 45, 78, 0.28) transparent;
 }
 *::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 *::-webkit-scrollbar-thumb {
-  background: var(--card-edge);
+  background: rgba(18, 45, 78, 0.28);
   border-radius: 99px;
 }
 
-/* ---------- ambient layers ---------- */
+/* ---------- sky layers ---------- */
+.sky-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 46%, var(--sky-bottom) 100%);
+  transition: --sky-top 900ms ease, --sky-mid 900ms ease, --sky-bottom 900ms ease;
+}
+
+.sun-halo {
+  position: fixed;
+  top: -190px;
+  left: -190px;
+  width: 660px;
+  height: 660px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 219, 130, 0.7) 0%, rgba(255, 199, 92, 0.3) 42%, transparent 68%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.sun-mascot {
+  position: fixed;
+  top: 30px;
+  left: 26px;
+  width: 148px;
+  height: 148px;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.96;
+  filter: drop-shadow(0 12px 34px rgba(232, 162, 58, 0.5));
+}
+@media (min-width: 640px) {
+  .sun-mascot {
+    width: 205px;
+    height: 205px;
+    top: 38px;
+    left: 40px;
+  }
+}
+
+.cloud-layer {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.cloud {
+  position: absolute;
+  left: 0;
+  animation-name: cloud-drift;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+@keyframes cloud-drift {
+  from { transform: translateX(-38vw); }
+  to { transform: translateX(116vw); }
+}
+
 .noise-layer {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 1;
-  opacity: 0.05;
+  opacity: 0.04;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
 }
 
-.orb {
-  position: fixed;
-  border-radius: 9999px;
-  filter: blur(90px);
-  pointer-events: none;
-  z-index: 0;
-  transition: background-color 1200ms ease;
-}
-
-@keyframes drift-a {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(60px, -40px) scale(1.12); }
-  66% { transform: translate(-40px, 30px) scale(0.94); }
-}
-@keyframes drift-b {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  40% { transform: translate(-70px, 50px) scale(1.08); }
-  75% { transform: translate(50px, -30px) scale(0.92); }
-}
-.orb-a { animation: drift-a 26s ease-in-out infinite; }
-.orb-b { animation: drift-b 32s ease-in-out infinite; }
-
 /* ---------- living bits ---------- */
 @keyframes breathe {
-  0%, 100% { opacity: 0.5; transform: scale(0.96); }
-  50% { opacity: 1; transform: scale(1.05); }
+  0%, 100% { opacity: 0.45; transform: scale(0.96); }
+  50% { opacity: 0.9; transform: scale(1.05); }
 }
 .breathing { animation: breathe 3.2s ease-in-out infinite; }
 
@@ -170,9 +229,7 @@ body {
 }
 .dot-pop { animation: dot-pop 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
 
-/* slow sun-ray rotation for decorative suns */
 @keyframes spin-slow {
-  from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 .spin-slow { animation: spin-slow 46s linear infinite; }
