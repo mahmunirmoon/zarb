@@ -13,9 +13,9 @@ import {
 } from "./Icons";
 
 const MODE_COLORS: Record<Mode, string> = {
-  focus: "#ff6a55",
-  short: "#3fd68f",
-  long: "#8ba3ff",
+  focus: "#f2b13e",
+  short: "#a8c271",
+  long: "#d48493",
 };
 const MODE_LABELS: Record<Mode, string> = {
   focus: "تمرکز",

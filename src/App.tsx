@@ -20,7 +20,7 @@ import {
 } from "./lib/pomodoro";
 import TimerCard from "./components/TimerCard";
 import { HistoryPanel, SettingsPanel, StatsPanel } from "./components/SidePanels";
-import { KeyboardIcon, MuteIcon, TomatoMark, VolumeIcon } from "./components/Icons";
+import { KeyboardIcon, MuteIcon, SunMark, VolumeIcon } from "./components/Icons";
 
 interface Toast {
   id: number;
@@ -55,8 +55,8 @@ export default function App() {
   useEffect(() => {
     const { m, s } = faClock(secondsLeft);
     document.title = running
-      ? `${m}:${s} • ${MODE_META[mode].label} — گوجه`
-      : "گوجه — تایمر پومودورو";
+      ? `${m}:${s} • ${MODE_META[mode].label} — اوقات طلایی من`
+      : "اوقات طلایی من — تمرکز کن، استراحت کن، دوباره شروع کن.";
   }, [secondsLeft, running, mode]);
 
   const pushToast = (text: string) => {
@@ -226,14 +226,21 @@ export default function App() {
 
       <div className="relative z-10 mx-auto max-w-6xl px-4 pb-10 pt-6 sm:px-6 sm:pt-8">
         {/* header */}
-        <header className="fade-up mb-8 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <span className="grid h-12 w-12 place-items-center rounded-2xl bg-[var(--accent-deep)] text-[var(--accent)] transition-colors duration-700">
-              <TomatoMark className="h-8 w-8" />
+        <header className="fade-up mb-8 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <span className="grid h-14 w-14 place-items-center rounded-2xl border border-[var(--accent)]/25 bg-[var(--accent-deep)] shadow-[0_12px_35px_-12px_var(--accent-glow)] transition-colors duration-700">
+              <SunMark className="h-10 w-10" />
             </span>
             <div>
-              <h1 className="font-display text-[28px] leading-none text-[var(--ink)]">گوجه</h1>
-              <p className="mt-1 text-xs font-semibold text-[var(--ink-dim)]">تایمر پومودورو برای تمرکز عمیق</p>
+              <h1 className="font-display text-[30px] leading-none text-[var(--accent)] transition-colors duration-700 sm:text-[34px]">
+                اوقات طلایی من
+              </h1>
+              <p className="mt-1.5 text-sm font-extrabold text-[var(--ink)]">
+                تمرکز کن، استراحت کن، دوباره شروع کن.
+              </p>
+              <p className="mt-0.5 text-xs font-semibold text-[var(--ink-dim)]">
+                چرخه تمرکز و مدیریت زمان با زهرا
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -277,6 +284,30 @@ export default function App() {
             <HistoryPanel entries={entries} onClear={clearToday} />
           </div>
         </main>
+
+        {/* about */}
+        <section
+          className="fade-up relative mt-6 overflow-hidden rounded-3xl border border-[var(--accent)]/20 bg-[var(--card)] transition-colors duration-700"
+          style={{ animationDelay: "360ms" }}
+        >
+          <div className="pointer-events-none absolute -start-14 -top-20 h-56 w-56 opacity-[0.07]" aria-hidden>
+            <SunMark className="spin-slow h-full w-full" />
+          </div>
+          <div className="pointer-events-none absolute -bottom-24 -end-16 h-56 w-56 opacity-[0.05]" aria-hidden>
+            <SunMark className="spin-slow h-full w-full" />
+          </div>
+          <div className="relative flex flex-col items-start gap-4 p-6 sm:flex-row sm:items-center sm:p-7">
+            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[var(--accent-deep)]">
+              <SunMark className="h-8 w-8" />
+            </span>
+            <div className="min-w-0">
+              <h2 className="font-display text-[22px] leading-none text-[var(--accent)]">درباره ما</h2>
+              <p className="mt-2 text-sm leading-7 text-[var(--ink)]">
+                این برنامه را زهرا طراحی کرده به عنوان پروژه نهایی، از شاگردان دکتر ماه منیر آقایی.
+              </p>
+            </div>
+          </div>
+        </section>
 
         {/* footer */}
         <footer className="fade-up mt-10 flex flex-col items-center justify-between gap-3 text-[11px] text-[var(--ink-dim)] sm:flex-row" style={{ animationDelay: "400ms" }}>
