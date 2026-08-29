@@ -13,9 +13,9 @@ import {
 } from "./Icons";
 
 const MODE_COLORS: Record<Mode, string> = {
-  focus: "#f2b13e",
-  short: "#a8c271",
-  long: "#d48493",
+  focus: "#e08a00",
+  short: "#2f8a57",
+  long: "#b24a5e",
 };
 const MODE_LABELS: Record<Mode, string> = {
   focus: "تمرکز",
@@ -38,7 +38,7 @@ function Panel({
 }) {
   return (
     <section
-      className="fade-up rounded-3xl border border-[var(--card-edge)] bg-[var(--card)] p-5 transition-colors duration-700 sm:p-6"
+      className="fade-up rounded-3xl border border-[var(--card-edge)] bg-[var(--card)] p-5 shadow-[0_24px_60px_-30px_rgba(21,58,104,0.45)] backdrop-blur-sm transition-colors duration-700 sm:p-6"
       style={{ animationDelay: delay }}
     >
       <header className="mb-4 flex items-center gap-3">

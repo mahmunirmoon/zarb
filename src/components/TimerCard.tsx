@@ -43,7 +43,7 @@ export default function TimerCard({
 
   return (
     <section
-      className="fade-up relative flex flex-col items-center rounded-[28px] border border-[var(--card-edge)] bg-[var(--card)] px-5 pb-8 pt-6 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.6)] transition-colors duration-700 sm:px-10"
+      className="fade-up relative flex flex-col items-center rounded-[28px] border border-[var(--card-edge)] bg-[var(--card)] px-5 pb-8 pt-6 shadow-[0_28px_70px_-32px_rgba(21,58,104,0.5)] backdrop-blur-sm transition-colors duration-700 sm:px-10"
       style={{ animationDelay: "80ms" }}
     >
       {/* mode tabs */}
@@ -95,8 +95,7 @@ export default function TimerCard({
               );
             })}
           </g>
-          <circle cx="180" cy="180" r={R} stroke="var(--bg)" strokeWidth="14" fill="none" />
-          <circle cx="180" cy="180" r={R} stroke="var(--card-edge)" strokeWidth="14" fill="none" />
+          <circle cx="180" cy="180" r={R} stroke="var(--ring-track)" strokeWidth="14" fill="none" />
           <circle
             className="ring-progress"
             cx="180"
@@ -160,7 +159,7 @@ export default function TimerCard({
 
         <button
           onClick={onToggle}
-          className="flex min-w-[168px] items-center justify-center gap-2.5 rounded-2xl bg-[var(--accent)] px-8 py-4 text-lg font-extrabold text-[var(--bg)] shadow-[0_16px_50px_-12px_var(--accent-glow)] transition-all duration-300 hover:bg-[var(--accent-strong)] hover:shadow-[0_20px_60px_-10px_var(--accent-glow)]"
+          className="flex min-w-[168px] items-center justify-center gap-2.5 rounded-2xl bg-[var(--accent)] px-8 py-4 text-lg font-extrabold text-[var(--on-accent)] shadow-[0_16px_44px_-14px_var(--accent-glow)] transition-all duration-300 hover:bg-[var(--accent-strong)] hover:shadow-[0_20px_54px_-12px_var(--accent-glow)]"
         >
           {running ? <PauseIcon className="h-6 w-6" /> : <PlayIcon className="h-6 w-6" />}
           {running ? "توقف" : secondsLeft < totalSeconds ? "ادامه" : "شروع"}

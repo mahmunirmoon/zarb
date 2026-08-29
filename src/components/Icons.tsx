@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 interface IconProps {
   className?: string;
 }
@@ -150,5 +152,15 @@ export const SunMark = ({ className }: IconProps) => (
     <circle cx="39.4" cy="29.1" r="0.8" fill="#fff8ec" opacity="0.9" />
     {/* smile */}
     <path d="M24.5 37.5q7.5 7.5 15 0" stroke="#6b4423" strokeWidth="2.5" strokeLinecap="round" />
+  </svg>
+);
+
+/* soft fluffy cloud — used to build the drifting sky layer */
+export const CloudShape = ({ className, style }: { className?: string; style?: CSSProperties }) => (
+  <svg viewBox="0 0 220 120" className={className} style={style} aria-hidden>
+    <path
+      d="M180 96H44a26 26 0 0 1-4.6-51.6A34 34 0 0 1 105 30a30 30 0 0 1 56.8 9.4A25 25 0 0 1 180 96Z"
+      fill="#ffffff"
+    />
   </svg>
 );

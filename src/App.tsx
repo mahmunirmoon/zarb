@@ -20,7 +20,18 @@ import {
 } from "./lib/pomodoro";
 import TimerCard from "./components/TimerCard";
 import { HistoryPanel, SettingsPanel, StatsPanel } from "./components/SidePanels";
-import { KeyboardIcon, MuteIcon, SunMark, VolumeIcon } from "./components/Icons";
+import { CloudShape, KeyboardIcon, MuteIcon, SunMark, VolumeIcon } from "./components/Icons";
+
+/* drifting clouds — positions in %, widths in px; durations/delays in seconds (negative = pre-scattered) */
+const CLOUDS = [
+  { id: 1, top: "3%", width: 360, blur: 22, opacity: 0.8, duration: 170, delay: -30 },
+  { id: 2, top: "12%", width: 250, blur: 14, opacity: 0.65, duration: 120, delay: -80 },
+  { id: 3, top: "24%", width: 430, blur: 26, opacity: 0.7, duration: 200, delay: -140 },
+  { id: 4, top: "40%", width: 300, blur: 18, opacity: 0.5, duration: 150, delay: -55 },
+  { id: 5, top: "57%", width: 390, blur: 24, opacity: 0.45, duration: 185, delay: -100 },
+  { id: 6, top: "71%", width: 260, blur: 15, opacity: 0.5, duration: 130, delay: -20 },
+  { id: 7, top: "84%", width: 460, blur: 28, opacity: 0.4, duration: 210, delay: -160 },
+];
 
 interface Toast {
   id: number;
@@ -212,17 +223,24 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen overflow-x-hidden font-sans text-[var(--ink)] transition-colors duration-700">
-      {/* ambient background */}
-      <div
-        className="fixed inset-0 z-0 transition-all duration-1000"
-        style={{
-          backgroundImage:
-            "radial-gradient(1100px 700px at 85% -10%, var(--accent-deep), transparent 62%), radial-gradient(900px 650px at 8% 112%, var(--accent-deep), transparent 60%)",
-        }}
-      />
-      <div className="orb orb-a -top-44 -left-44 h-[480px] w-[480px] bg-[var(--accent)] opacity-[0.13]" />
-      <div className="orb orb-b -bottom-44 -right-36 h-[440px] w-[440px] bg-[var(--accent-2)] opacity-[0.10]" />
-      <div className="noise-layer" />
+      {/* ambient sky */}
+      <div className="sky-layer" aria-hidden />
+      <div className="sun-halo" aria-hidden />
+      <div className="sun-mascot" aria-hidden>
+        <SunMark className="spin-slow h-full w-full" />
+      </div>
+      <div className="cloud-layer" aria-hidden>
+        {CLOUDS.map((c) => (
+          <span
+            key={c.id}
+            className="cloud"
+            style={{ top: c.top, width: c.width, animationDuration: `${c.duration}s`, animationDelay: `${c.delay}s` }}
+          >
+            <CloudShape className="w-full" style={{ opacity: c.opacity, filter: `blur(${c.blur}px)` }} />
+          </span>
+        ))}
+      </div>
+      <div className="noise-layer" aria-hidden />
 
       <div className="relative z-10 mx-auto max-w-6xl px-4 pb-10 pt-6 sm:px-6 sm:pt-8">
         {/* header */}
@@ -232,7 +250,7 @@ export default function App() {
               <SunMark className="h-10 w-10" />
             </span>
             <div>
-              <h1 className="font-display text-[30px] leading-none text-[var(--accent)] transition-colors duration-700 sm:text-[34px]">
+              <h1 className="font-display text-[32px] leading-none text-[var(--ink)] drop-shadow-[0_2px_0_rgba(255,255,255,0.35)] transition-colors duration-700 sm:text-[36px]">
                 اوقات طلایی من
               </h1>
               <p className="mt-1.5 text-sm font-extrabold text-[var(--ink)]">
@@ -287,13 +305,13 @@ export default function App() {
 
         {/* about */}
         <section
-          className="fade-up relative mt-6 overflow-hidden rounded-3xl border border-[var(--accent)]/20 bg-[var(--card)] transition-colors duration-700"
+          className="fade-up relative mt-6 overflow-hidden rounded-3xl border border-[var(--accent)]/25 bg-[var(--card)] shadow-[0_24px_60px_-30px_rgba(21,58,104,0.45)] backdrop-blur-sm transition-colors duration-700"
           style={{ animationDelay: "360ms" }}
         >
-          <div className="pointer-events-none absolute -start-14 -top-20 h-56 w-56 opacity-[0.07]" aria-hidden>
+          <div className="pointer-events-none absolute -start-14 -top-20 h-56 w-56 opacity-[0.16]" aria-hidden>
             <SunMark className="spin-slow h-full w-full" />
           </div>
-          <div className="pointer-events-none absolute -bottom-24 -end-16 h-56 w-56 opacity-[0.05]" aria-hidden>
+          <div className="pointer-events-none absolute -bottom-24 -end-16 h-56 w-56 opacity-[0.12]" aria-hidden>
             <SunMark className="spin-slow h-full w-full" />
           </div>
           <div className="relative flex flex-col items-start gap-4 p-6 sm:flex-row sm:items-center sm:p-7">
@@ -326,7 +344,7 @@ export default function App() {
       {/* toast */}
       {toast && (
         <div key={toast.id} className="toast-in fixed bottom-6 left-1/2 z-50 -translate-x-1/2">
-          <div className="flex items-center gap-2.5 rounded-2xl border border-[var(--accent)]/30 bg-[var(--card)] px-5 py-3 text-sm font-bold text-[var(--ink)] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)]">
+          <div className="flex items-center gap-2.5 rounded-2xl border border-[var(--accent)]/35 bg-[var(--card)] px-5 py-3 text-sm font-bold text-[var(--ink)] shadow-[0_20px_55px_-18px_rgba(21,58,104,0.55)]">
             <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--accent)]" />
             {toast.text}
           </div>
