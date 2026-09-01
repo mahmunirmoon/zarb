@@ -1,9 +1,11 @@
-export type Mode = "focus" | "short" | "long";
+export type Mode = "focus" | "short" | "long" | "mobile" | "daily";
 
 export interface Settings {
   focus: number;
   short: number;
   long: number;
+  mobile: number;
+  daily: number;
   longEvery: number;
   goal: number;
   autoStartBreaks: boolean;
@@ -15,13 +17,16 @@ export interface LogEntry {
   id: string;
   mode: Mode;
   minutes: number;
-  at: number; // epoch ms
+  at: number;
+  label?: string;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
   focus: 25,
   short: 5,
   long: 15,
+  mobile: 30,
+  daily: 20,
   longEvery: 4,
   goal: 6,
   autoStartBreaks: true,
@@ -48,19 +53,38 @@ export const MODE_META: Record<
     shortLabel: "طولانی",
     next: () => "focus",
   },
+  mobile: {
+    label: "موبایل‌گردی",
+    shortLabel: "موبایل",
+    next: () => "focus",
+  },
+  daily: {
+    label: "کارهای روزانه",
+    shortLabel: "روزانه",
+    next: () => "focus",
+  },
 };
 
 export const durationOf = (mode: Mode, s: Settings): number =>
-  mode === "focus" ? s.focus : mode === "short" ? s.short : s.long;
+  mode === "focus"
+    ? s.focus
+    : mode === "short"
+      ? s.short
+      : mode === "long"
+        ? s.long
+        : mode === "mobile"
+          ? s.mobile
+          : s.daily;
 
 /* ---------------- persistence ---------------- */
 
-const S_KEY = "goje:settings:v1";
+const S_KEY = "goje:settings:v2";
+const OLD_S_KEY = "goje:settings:v1";
 const L_KEY = "goje:log:v1";
 
 export function loadSettings(): Settings {
   try {
-    const raw = localStorage.getItem(S_KEY);
+    const raw = localStorage.getItem(S_KEY) ?? localStorage.getItem(OLD_S_KEY);
     if (!raw) return DEFAULT_SETTINGS;
     return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
   } catch {
@@ -89,7 +113,7 @@ export function loadLog(): LogEntry[] {
 
 export function saveLog(log: LogEntry[]) {
   try {
-    localStorage.setItem(L_KEY, JSON.stringify(log.slice(-500)));
+    localStorage.setItem(L_KEY, JSON.stringify(log.slice(-1000)));
   } catch {
     /* ignore */
   }
@@ -128,18 +152,20 @@ export function dayKey(d: Date): string {
 export const isToday = (epoch: number): boolean =>
   dayKey(new Date(epoch)) === dayKey(new Date());
 
+export const todayMinutesByMode = (log: LogEntry[], mode: Mode): number =>
+  log
+    .filter((e) => e.mode === mode && isToday(e.at))
+    .reduce((sum, e) => sum + e.minutes, 0);
+
 export const todayFocusCount = (log: LogEntry[]): number =>
   log.filter((e) => e.mode === "focus" && isToday(e.at)).length;
 
 export const todayFocusMinutes = (log: LogEntry[]): number =>
-  log
-    .filter((e) => e.mode === "focus" && isToday(e.at))
-    .reduce((sum, e) => sum + e.minutes, 0);
+  todayMinutesByMode(log, "focus");
 
 export const todayEntries = (log: LogEntry[]): LogEntry[] =>
   log.filter((e) => isToday(e.at));
 
-/** consecutive days (ending today or yesterday) with at least one focus session */
 export function streakDays(log: LogEntry[]): number {
   const days = new Set(
     log.filter((e) => e.mode === "focus").map((e) => dayKey(new Date(e.at)))
@@ -154,7 +180,6 @@ export function streakDays(log: LogEntry[]): number {
   return streak;
 }
 
-/** focus minutes for each of the last 7 days, oldest first */
 export function last7Days(log: LogEntry[]): { label: string; minutes: number; isToday: boolean }[] {
   const out: { label: string; minutes: number; isToday: boolean }[] = [];
   for (let i = 6; i >= 0; i--) {
