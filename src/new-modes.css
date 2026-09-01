@@ -1,0 +1,36 @@
+/* Additional themes for the two new modes */
+html[data-mode="mobile"] {
+  --sky-top: #7769d8;
+  --sky-mid: #a69de8;
+  --sky-bottom: #e8e4ff;
+  --bg: #a69de8;
+  --card: rgba(252, 251, 255, 0.93);
+  --card-edge: rgba(55, 43, 112, 0.16);
+  --ring-track: rgba(55, 43, 112, 0.11);
+  --ink: #241d42;
+  --ink-dim: #5d557a;
+  --accent: #6f5bd3;
+  --accent-strong: #5946bd;
+  --accent-deep: rgba(111, 91, 211, 0.16);
+  --accent-glow: rgba(151, 134, 235, 0.55);
+  --accent-2: #d77a28;
+  --on-accent: #ffffff;
+}
+
+html[data-mode="daily"] {
+  --sky-top: #e6a05d;
+  --sky-mid: #f2c28d;
+  --sky-bottom: #fff0dc;
+  --bg: #f2c28d;
+  --card: rgba(255, 253, 249, 0.94);
+  --card-edge: rgba(106, 63, 24, 0.15);
+  --ring-track: rgba(106, 63, 24, 0.1);
+  --ink: #352314;
+  --ink-dim: #745a43;
+  --accent: #d77a28;
+  --accent-strong: #b86116;
+  --accent-deep: rgba(215, 122, 40, 0.15);
+  --accent-glow: rgba(240, 173, 104, 0.5);
+  --accent-2: #6f5bd3;
+  --on-accent: #fffaf5;
+}
